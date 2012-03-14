@@ -83,11 +83,11 @@ def calcRDF(trajfile, pdbdir, side, n_bins):
                             
                         # minimum image
                         if (xx < -box_half):   xx = xx + side
-                        if (xx > box_half):    xx = xx - side
+                        if (xx >  box_half):   xx = xx - side
                         if (yy < -box_half):   yy = yy + side
-                        if (yy > box_half):    yy = yy - side
+                        if (yy >  box_half):   yy = yy - side
                         if (zz < -box_half):   zz = zz + side
-                        if (zz > box_half):    zz = zz - side
+                        if (zz >  box_half):   zz = zz - side
                           
                         # distance between i and j
                         rd  = xx * xx + yy * yy + zz * zz
@@ -104,7 +104,9 @@ def calcRDF(trajfile, pdbdir, side, n_bins):
             continue										# We're not interested in non-COM atoms
         coords = map(float, (line[31:54]).split())						# However, if we recognize a COM site, map the cartesian coords
         atoms.append((coords[0], coords[1], coords[2]))
-     
+
+    traj.close()
+
     # Normalize
     print "Normalizing ... "
     nconfigs = config - 1
@@ -113,7 +115,7 @@ def calcRDF(trajfile, pdbdir, side, n_bins):
     norm = 2.0 * pi * dr * rho * nconfigs * avg_part
 
     print "NORM: %f\tDR: %f\tRHO: %f\t NCONFIGS: %d\tAVG_PART: %f" % (norm,dr,rho,nconfigs,avg_part)
- 
+
     for i in range(1, maxbin+1):
         rrr = (i - 0.5) * dr
         val = hist[i]/ norm / ((rrr * rrr) + (dr * dr) / 12.0)
@@ -129,9 +131,9 @@ rdfout  = "./RDF.dat"
 
 # Check Arguments
 if len(sys.argv) == 4:
-    trajfile = sys.argv[1]
-    boxlength = float(sys.argv[2])
-    n_bins = int(sys.argv[3])
+    trajfile      = sys.argv[1]
+    boxlength     = float(sys.argv[2])
+    n_bins        = int(sys.argv[3])
 else:
     print "Insufficent number of arguments. USAGE: $ python RDF.py [traj_file.pdb] [box_length (A)] [# of bins]"
     sys.exit(1)
